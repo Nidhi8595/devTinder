@@ -18,6 +18,37 @@ app.post("/signup", async (req, res) => {
     }
 })
 
+// Get User by email
+app.get("/user", async (req, res) => {
+    const userEmail = req.body.emailId;
+
+    try {
+        const user = await User.findOne({ emailId: userEmail })
+        if (!user) {
+            res.status(400).send("Error fetching user")
+        }
+        else {
+            res.send(user)
+        }
+    }
+    catch (err) {
+        res.status(400).send("Error fetching user")
+    }
+})
+
+// Feed API to get all users from DB
+app.get("/feed", async (req, res) => {
+
+    try {
+        const users = await User.find({})
+        res.send(users)
+    }
+    catch (err) {
+        res.status(400).send("Error fetching user")
+    }
+
+})
+
 connectDB()
     .then(() => {
         console.log('Database connected');
