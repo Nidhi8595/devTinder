@@ -10,3 +10,9 @@
 - handling routes
 - regex in routes
 - different route methods
+- middlewares
+- creating database
+- creating APIs
+- get, delete, update users dynamically
+- sanitizing data & Validations
+- using validator lib
