@@ -1,9 +1,9 @@
-const express = require("express");
-const requestRouter = express.Router();
+import express from "express";
+import userAuth from "../middlewares/userAuth.js";
+import ConnectionRequest from "../models/connectionRequest.js";
+import User from "../models/user.js";
 
-const { userAuth } = require("../middlewares/auth");
-const ConnectionRequest = require("../models/connectionRequest");
-const User = require("../models/user");
+const requestRouter = express.Router();
 
 requestRouter.post(
   "/request/send/:status/:toUserId",
@@ -62,34 +62,37 @@ requestRouter.post(
   userAuth,
   async (req, res) => {
     try {
-      const loggedInUser = req.user;
       const { status, requestId } = req.params;
 
-      const allowedStatus = ["accepted", "rejected"];
-      if (!allowedStatus.includes(status)) {
-        return res.status(400).json({ messaage: "Status not allowed!" });
+      const allowedStatuses = ["accepted", "rejected"];
+      if (!allowedStatuses.includes(status)) {
+        return res
+          .status(400)
+          .json({ message: "Invalid status type: " + status });
       }
 
-      const connectionRequest = await ConnectionRequest.findOne({
-        _id: requestId,
-        toUserId: loggedInUser._id,
-        status: "interested",
-      });
+      const connectionRequest = await ConnectionRequest.findById(requestId);
       if (!connectionRequest) {
+        return res.status(404).json({ message: "Connection Request not found!" });
+      }
+
+      if (connectionRequest.toUserId.toString() !== req.user._id.toString()) {
         return res
-          .status(404)
-          .json({ message: "Connection request not found" });
+          .status(403)
+          .json({ message: "You are not authorized to review this request!" });
       }
 
       connectionRequest.status = status;
+      const updatedRequest = await connectionRequest.save();
 
-      const data = await connectionRequest.save();
-
-      res.json({ message: "Connection request " + status, data });
+      res.json({
+        message: `Connection request ${status} successfully.`,
+        data: updatedRequest,
+      });
     } catch (err) {
       res.status(400).send("ERROR: " + err.message);
     }
   }
 );
 
-module.exports = requestRouter;
+export default requestRouter;

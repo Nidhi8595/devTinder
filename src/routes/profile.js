@@ -1,13 +1,12 @@
-const express = require("express");
-const profileRouter = express.Router();
+import express from "express";
+import userAuth from "../middlewares/userAuth.js";
+import validation from "../utils/validation.js";
 
-const { userAuth } = require("../middlewares/auth");
-const { validateEditProfileData } = require("../utils/validation");
+const profileRouter = express.Router();
 
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
     const user = req.user;
-
     res.send(user);
   } catch (err) {
     res.status(400).send("ERROR : " + err.message);
@@ -16,7 +15,7 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
 
 profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   try {
-    if (!validateEditProfileData(req)) {
+    if (!validation.validateEditProfileData(req)) {
       throw new Error("Invalid Edit Request");
     }
 
@@ -27,7 +26,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
     await loggedInUser.save();
 
     res.json({
-      message: `${loggedInUser.firstName}, your profile updated successfuly`,
+      message: `${loggedInUser.firstName}, your profile updated successfully`,
       data: loggedInUser,
     });
   } catch (err) {
@@ -35,4 +34,4 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   }
 });
 
-module.exports = profileRouter;
+export default profileRouter;

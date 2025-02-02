@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import validator from "validator"
 
 const userSchema = new mongoose.Schema(
   {
@@ -73,6 +73,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+// Generate JWT token
 userSchema.methods.getJWT = async function () {
   const user = this;
 
@@ -95,5 +96,6 @@ userSchema.methods.validatePassword = async function (passwordInputByUser) {
   return isPasswordValid;
 };
 
-module.exports = mongoose.model("User", userSchema);
 
+const User = mongoose.model("User", userSchema);
+export default User;

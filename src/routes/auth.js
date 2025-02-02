@@ -1,14 +1,15 @@
-const express = require("express");
-const authRouter = express.Router();
+import express from "express";
+import valid from "../utils/validation.js";  // Import validation function
+import User from "../models/user.js";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
-const { validateSignUpData } = require("../utils/validation");
-const User = require("../models/user");
-const bcrypt = require("bcrypt");
+const authRouter = express.Router();
 
 authRouter.post("/signup", async (req, res) => {
   try {
     // Validation of data
-    validateSignUpData(req);
+    valid.validateSignUpData(req);
 
     const { firstName, lastName, emailId, password } = req.body;
 
@@ -56,11 +57,12 @@ authRouter.post("/login", async (req, res) => {
   }
 });
 
+// Logout Route
 authRouter.post("/logout", async (req, res) => {
   res.cookie("token", null, {
-    expires: new Date(Date.now()),
+    expires: new Date(Date.now()), // Delete cookie
   });
   res.send("Logout Successful!!");
 });
 
-module.exports = authRouter;
+export default authRouter;
