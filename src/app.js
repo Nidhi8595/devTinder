@@ -4,7 +4,7 @@ import http from "http";
 import { Server } from "socket.io";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 import initializeSocket from "./socket.js";
 import authRouter from "./routes/auth.js";
 import profileRouter from "./routes/profile.js";
@@ -12,7 +12,7 @@ import requestRouter from "./routes/request.js";
 import userRouter from "./routes/user.js";
 import messageRoutes from "./routes/message.js";
 
-dotenv.config();
+// dotenv.config();
 
 const app = express();
 const server = http.createServer(app);

@@ -90,6 +90,7 @@ const initializeSocket = (io) => {
       }
       io.emit("update-user-status", Array.from(onlineUsers.keys()));
     });
+
   });
 };
 
